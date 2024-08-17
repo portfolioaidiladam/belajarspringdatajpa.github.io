@@ -18,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "categories")
+// perlu ditambahkan untuk belajar auditing karena ini bawaan dari Entity listener
 @EntityListeners({AuditingEntityListener.class})
 public class Category {
 
@@ -29,11 +30,12 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private List<Product> products;
-
+    // akan diubah datanya setelah proses di insert (belajar auditing)
+    // nah dia akan sekali doang tidak akan pernah diubah lagi
     @CreatedDate
     @Column(name = "created_date")
     private Instant createdDate;
-
+    // kalau ini setiap kali kita melakukan perubahan, dia akan diubah terus (belajar auditing)
     @LastModifiedDate
     @Column(name = "last_modified_date")
     private Instant lastModifiedDate;

@@ -17,10 +17,12 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Repository
+
+// tambahkan JpaSpecificationExecutor untuk belajar Specification
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
-
+    // belajar fitur projection dan belajar dynamic projection bikin pake generic
     <T> List<T> findAllByNameLike(String name, Class<T> tClass);
-
+    // Belajar Lock
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Product> findFirstByIdEquals(Long id);
     // belajar Slice, harus ada pageablenya

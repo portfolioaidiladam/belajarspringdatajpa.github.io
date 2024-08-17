@@ -216,7 +216,7 @@ class ProductRepositoryTest {
             // tampilkan konten product
         }
     }
-
+    // Belajar Lock, harus jalan transactional mau find 30 juta lalu disleep 20 detik
     @Test
     void lock1() {
         transactionOperations.executeWithoutResult(transactionStatus -> {
@@ -226,13 +226,14 @@ class ProductRepositoryTest {
                 product.setPrice(30_000_000L);
 
                 Thread.sleep(20_000L);
+                //save ke database
                 productRepository.save(product);
             } catch (InterruptedException exception) {
                 throw new RuntimeException(exception);
             }
         });
     }
-
+    // Belajar Lock, harus jalan transactional mau find 10 juta
     @Test
     void lock2() {
         transactionOperations.executeWithoutResult(transactionStatus -> {
@@ -242,10 +243,11 @@ class ProductRepositoryTest {
             productRepository.save(product);
         });
     }
-
+    // belajar specification
     @Test
     void specification() {
         Specification<Product> specification= (root, criteriaQuery, criteriaBuilder) -> {
+            // kita bisa mengirim kriteria API kedalam data repository
             return criteriaQuery.where(
                     criteriaBuilder.or(
                             criteriaBuilder.equal(root.get("name"), "Apple iPhone 14 Pro Max"),
@@ -257,7 +259,7 @@ class ProductRepositoryTest {
         List<Product> products = productRepository.findAll(specification);
         assertEquals(2, products.size());
     }
-
+    // belajar fitur projection dan belajar dynamic projection bikin pake generic
     @Test
     void projection() {
         List<SimpleProduct> simpleProducts = productRepository.findAllByNameLike("%Apple%", SimpleProduct.class);
