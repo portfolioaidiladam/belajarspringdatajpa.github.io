@@ -23,25 +23,27 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Product> findFirstByIdEquals(Long id);
-
+    // belajar Slice, harus ada pageablenya
     Slice<Product> findAllByCategory(Category category, Pageable pageable);
-
+    // Belajar Stream , dimana operasinya itu lazy
     Stream<Product> streamAllByCategory(Category category);
-
+    // belajar modifying
     @Modifying
     @Query("delete from Product p where p.name = :name")
     int deleteProductUsingName(@Param("name") String name);
-
+    // belajar modifying
     @Modifying
     @Query("update Product p set p.price = 0 where p.id = :id")
     int updateProductPriceToZero(@Param("id") Long id);
-
+     // belajar Query Anotation, direpository mendukung sort dan paging
     @Query(
             value = "select p from Product p where p.name like :name or p.category.name like :name",
             countQuery = "select count(p) from Product p where p.name like :name or p.category.name like :name"
     )
     Page<Product> searchProduct(@Param("name") String name, Pageable pageable);
 
+
+    // belajar named query, di Repository tidak mendukung Sort
     List<Product> searchProductUsingName(@Param("name") String name, Pageable pageable);
 
     @Transactional

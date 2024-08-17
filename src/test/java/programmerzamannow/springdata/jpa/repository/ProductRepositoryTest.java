@@ -8,6 +8,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.support.TransactionOperations;
 import programmerzamannow.springdata.jpa.entity.Category;
 import programmerzamannow.springdata.jpa.entity.Product;
+import programmerzamannow.springdata.jpa.model.ProductPrice;
+import programmerzamannow.springdata.jpa.model.SimpleProduct;
 
 
 import java.util.List;
@@ -145,7 +147,7 @@ class ProductRepositoryTest {
         delete = productRepository.deleteByName("Samsung Galaxy S9"); // transaksi 3
         assertEquals(0, delete);
     }
-
+    // belajar named query, di Repository tidak mendukung Sort
     @Test
     void namedQuery() {
         Pageable pageable = PageRequest.of(0, 1);
@@ -153,7 +155,7 @@ class ProductRepositoryTest {
         assertEquals(1, products.size());
         assertEquals("Apple iPhone 14 Pro Max", products.get(0).getName());
     }
-
+    // belajar Query Anotation, direpository mendukung sort dan paging
     @Test
     void searchProducts() {
         Pageable pageable = PageRequest.of(0, 1, Sort.by(Sort.Order.desc("id")));
@@ -171,8 +173,9 @@ class ProductRepositoryTest {
         assertEquals(2, products.getTotalPages());
         assertEquals(2, products.getTotalElements());
     }
-
+     // belajar modifying
     @Test
+    // karena tidak dikasih @Transactional di javanya maka ini jadi read only, makanya kita buat transactionOperations
     void modifying() {
         transactionOperations.executeWithoutResult(transactionStatus -> {
             int total = productRepository.deleteProductUsingName("Wrong");
@@ -186,8 +189,9 @@ class ProductRepositoryTest {
             assertEquals(0L, product.getPrice());
         });
     }
-
+    // Belajar Stream , dimana operasinya itu lazy
     @Test
+    // karena tidak dikasih @Transactional di servicenya maka stream jadi diluar transactional, makanya kita buat transactionOperations
     void stream() {
         transactionOperations.executeWithoutResult(transactionStatus -> {
             Category category = categoryRepository.findById(1L).orElse(null);
@@ -197,7 +201,7 @@ class ProductRepositoryTest {
             stream.forEach(product -> System.out.println(product.getId() + " : " + product.getName()));
         });
     }
-
+    // belajar Slice, harus ada pageablenya
     @Test
     void slice() {
         Pageable firstPage = PageRequest.of(0, 1);
@@ -254,12 +258,12 @@ class ProductRepositoryTest {
         assertEquals(2, products.size());
     }
 
-    /*@Test
+    @Test
     void projection() {
         List<SimpleProduct> simpleProducts = productRepository.findAllByNameLike("%Apple%", SimpleProduct.class);
         assertEquals(2, simpleProducts.size());
 
         List<ProductPrice> productPrices = productRepository.findAllByNameLike("%Apple%", ProductPrice.class);
         assertEquals(2, productPrices.size());
-    }*/
+    }
 }
